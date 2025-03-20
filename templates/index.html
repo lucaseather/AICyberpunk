@@ -127,11 +127,21 @@
 
         .nav-buttons {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 15px;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .nav-buttons.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 243, 255, 0.1);
         }
 
         .nav-buttons .cyber-button {
@@ -166,22 +176,20 @@
             }
 
             .nav-buttons {
-                position: static;
-                margin-bottom: 20px;
-                justify-content: center;
-                flex-wrap: wrap;
+                padding: 10px;
             }
 
             .feature-card {
-                margin-bottom: 20px;
+                padding: 20px;
             }
         }
 
-        /* 頁面過渡動畫 */
+        /* Apple 風格的過渡效果 */
         .page-transition {
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .page-transition.active {
@@ -189,19 +197,138 @@
             transform: translateY(0);
         }
 
-        /* 元素淡入動畫 */
-        .fade-in {
+        /* 平滑滾動和動畫效果 */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        /* 內容區塊過渡效果 */
+        .content-section {
             opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* 按鈕點擊效果 */
+        /* 導航欄固定效果 */
+        .nav-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .nav-buttons.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 243, 255, 0.1);
+        }
+
+        /* 功能卡片網格布局 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 243, 255, 0.2);
+        }
+
+        /* 滾動指示器 */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .scroll-indicator.visible {
+            opacity: 1;
+        }
+
+        .scroll-indicator i {
+            color: var(--neon-blue);
+            font-size: 24px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* 響應式布局優化 */
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .nav-buttons {
+                padding: 10px;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+        }
+
+        /* 按鈕過渡效果 */
         .cyber-button {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -216,19 +343,20 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: width 0.3s ease, height 0.3s ease;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                        height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .cyber-button:active::after {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
         }
 
-        /* 結果容器動畫 */
+        /* 結果容器過渡效果 */
         .result-container {
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.5s ease;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .result-container.show {
@@ -236,28 +364,38 @@
             transform: translateY(0);
         }
 
-        /* 歷史記錄項目動畫 */
-        .history-item {
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: slideIn 0.5s ease forwards;
-        }
-
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* 功能卡片動畫 */
+        /* 功能卡片過渡效果 */
         .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2);
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2);
+        }
+
+        /* 歷史記錄項目過渡效果 */
+        .history-item {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .history-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 元素淡入動畫 */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* 按鈕組樣式 */
@@ -302,6 +440,213 @@
             padding: 10px 20px;
             margin-top: 10px;
         }
+
+        /* 移動端優化 */
+        @media (max-width: 768px) {
+            /* 基礎布局調整 */
+            .container {
+                padding: 0 15px;
+            }
+
+            .cyber-container {
+                margin: 10px 0;
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            /* 導航欄優化 */
+            .nav-buttons {
+                padding: 10px;
+                justify-content: space-between;
+            }
+
+            .nav-buttons .cyber-button {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            /* 搜索框優化 */
+            .cyber-input {
+                font-size: 16px; /* 防止 iOS 自動縮放 */
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            /* 按鈕組優化 */
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .button-group .cyber-button {
+                width: 100%;
+                padding: 12px;
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            /* 功能卡片優化 */
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 20px 0;
+            }
+
+            .feature-card {
+                padding: 20px;
+                margin: 0;
+            }
+
+            /* 結果容器優化 */
+            .result-container {
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .example-sentence {
+                padding: 12px;
+                margin: 8px 0;
+            }
+
+            /* 歷史記錄優化 */
+            .history-item {
+                padding: 12px;
+                margin: 8px 0;
+            }
+
+            /* 模態框優化 */
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100% - 20px);
+            }
+
+            .modal-content {
+                border-radius: 12px;
+            }
+
+            /* 觸控優化 */
+            .cyber-button {
+                min-height: 44px; /* 確保足夠的觸控區域 */
+                touch-action: manipulation;
+            }
+
+            /* 滾動優化 */
+            html {
+                scroll-padding-top: 60px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* 動畫優化 */
+            .content-section,
+            .feature-card,
+            .history-item {
+                transition: transform 0.3s ease,
+                            opacity 0.3s ease;
+            }
+
+            /* 性能優化 */
+            .feature-card::before,
+            .cyber-button::after {
+                display: none; /* 移除移動端不必要的動畫效果 */
+            }
+
+            /* 字體大小調整 */
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1.2rem;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+                margin-bottom: 1rem;
+            }
+
+            h5 {
+                font-size: 1.1rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+            }
+
+            /* 間距調整 */
+            .mt-4, .mb-4 {
+                margin-top: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            /* 音頻播放器優化 */
+            .audio-player {
+                width: 100%;
+                height: 40px;
+                margin: 10px 0;
+            }
+
+            /* 用戶信息顯示優化 */
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .user-info span {
+                font-size: 0.9rem;
+            }
+
+            /* 滾動指示器優化 */
+            .scroll-indicator {
+                bottom: 20px;
+                right: 20px;
+                left: auto;
+                transform: none;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 10px;
+                border-radius: 50%;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .scroll-indicator i {
+                font-size: 20px;
+            }
+        }
+
+        /* 添加移動端特定的事件處理 */
+        document.addEventListener('DOMContentLoaded', function() {
+            // 檢測是否為移動設備
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // 優化移動端點擊事件
+                document.querySelectorAll('.cyber-button').forEach(button => {
+                    button.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+
+                    button.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                });
+
+                // 優化滾動性能
+                let touchStartY = 0;
+                let touchEndY = 0;
+
+                document.addEventListener('touchstart', function(e) {
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+
+                document.addEventListener('touchmove', function(e) {
+                    touchEndY = e.touches[0].clientY;
+                }, { passive: true });
+
+                // 防止 iOS 橡皮筋效果
+                document.body.addEventListener('touchmove', function(e) {
+                    if (e.target.closest('.modal-content')) {
+                        e.stopPropagation();
+                    }
+                }, { passive: false });
+            }
+        });
     </style>
 </head>
 <body>
@@ -748,17 +1093,92 @@
 
             // 為歷史記錄項目添加延遲動畫
             document.querySelectorAll('.history-item').forEach((item, index) => {
-                item.style.animationDelay = `${index * 0.1}s`;
+                item.style.transitionDelay = `${index * 0.1}s`;
+                item.classList.add('visible');
             });
+
+            // 初始化滾動觀察器
+            initScrollObserver();
+            
+            // 添加滾動指示器
+            addScrollIndicator();
+        });
+
+        // 滾動觀察器優化
+        function initScrollObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // 移除觀察，提高性能
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // 觀察所有內容區塊
+            document.querySelectorAll('.content-section, .feature-card, .history-item').forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        // 添加滾動指示器
+        function addScrollIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            document.body.appendChild(indicator);
+
+            // 控制指示器顯示
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    indicator.classList.add('visible');
+                } else {
+                    indicator.classList.remove('visible');
+                }
+            });
+
+            // 點擊指示器滾動到頂部
+            indicator.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // 滾動事件處理優化
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            const navButtons = document.querySelector('.nav-buttons');
+            
+            // 使用 requestAnimationFrame 優化性能
+            if (!scrollTimeout) {
+                scrollTimeout = requestAnimationFrame(() => {
+                    if (window.scrollY > 50) {
+                        navButtons.classList.add('scrolled');
+                    } else {
+                        navButtons.classList.remove('scrolled');
+                    }
+                    scrollTimeout = null;
+                });
+            }
         });
 
         // 平滑滾動
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
         });
 
