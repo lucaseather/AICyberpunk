@@ -1,0 +1,11 @@
+.header {
+  margin-top: 20px; /* 增加顶部边距 */
+  padding-top: 20px; /* 增加顶部内边距 */
+  position: relative; /* 确保内容不会被遮挡 */
+  z-index: 1; /* 确保内容在最上层 */
+}
+
+.title {
+  color: #fff; /* 确保文字为白色以提高可见度 */
+  text-shadow: 0 0 10px rgba(0,0,0,0.5); /* 添加文字阴影提高可读性 */
+} 
