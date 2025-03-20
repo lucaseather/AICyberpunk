@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>賽博朋克詞典</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -129,7 +130,13 @@
             top: 20px;
             right: 20px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-buttons .cyber-button {
+            padding: 8px 16px;
+            font-size: 0.9rem;
         }
 
         .user-info {
@@ -148,17 +155,158 @@
                 padding: 15px;
             }
             
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .button-group .cyber-button {
+                width: 100%;
+                max-width: none;
+            }
+
             .nav-buttons {
                 position: static;
                 margin-bottom: 20px;
                 justify-content: center;
+                flex-wrap: wrap;
             }
+
+            .feature-card {
+                margin-bottom: 20px;
+            }
+        }
+
+        /* 頁面過渡動畫 */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 元素淡入動畫 */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 按鈕點擊效果 */
+        .cyber-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .cyber-button:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        /* 結果容器動畫 */
+        .result-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 歷史記錄項目動畫 */
+        .history-item {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* 功能卡片動畫 */
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* 按鈕組樣式 */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .button-group .cyber-button {
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+            margin: 5px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 功能卡片按鈕樣式 */
+        .feature-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-blue);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card h5 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+        }
+
+        .feature-card .cyber-button {
+            width: 100%;
+            padding: 10px 20px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="nav-buttons">
+        <div class="nav-buttons page-transition">
             <div class="user-info" id="userInfo" style="display: none;">
                 <span id="username"></span>
                 <button class="cyber-button" onclick="logout()">登出</button>
@@ -169,8 +317,8 @@
             </div>
         </div>
 
-        <div class="cyber-container">
-            <h1 class="text-center mb-4">賽博朋克詞典</h1>
+        <div class="cyber-container page-transition">
+            <h1 class="text-center mb-4" id="pageTitle">賽博朋克詞典</h1>
             <div class="row">
                 <div class="col-md-8 mx-auto">
                     <form id="searchForm">
@@ -185,11 +333,19 @@
                 <p id="translationResult"></p>
                 <audio id="audioPlayer" class="audio-player" controls></audio>
                 <div id="examples"></div>
-                <div class="button-group mt-3">
-                    <button class="cyber-button me-2" onclick="addToCollection()">加入收藏夾</button>
-                    <button class="cyber-button me-2" onclick="window.location.href='/collections'">查看收藏夾</button>
-                    <button class="cyber-button me-2" onclick="addToStudyList()">加入生詞本</button>
-                    <button class="cyber-button" onclick="window.location.href='/study/test'">開始測試</button>
+                <div class="button-group">
+                    <button class="cyber-button" onclick="addToCollection()">
+                        <i class="fas fa-bookmark"></i> 加入收藏夾
+                    </button>
+                    <button class="cyber-button" onclick="window.location.href='/collections'">
+                        <i class="fas fa-folder"></i> 查看收藏夾
+                    </button>
+                    <button class="cyber-button" onclick="addToStudyList()">
+                        <i class="fas fa-book"></i> 加入生詞本
+                    </button>
+                    <button class="cyber-button" onclick="window.location.href='/study/test'">
+                        <i class="fas fa-tasks"></i> 開始測試
+                    </button>
                 </div>
             </div>
 
@@ -200,24 +356,33 @@
 
             <!-- 功能導航欄 -->
             <div class="feature-nav mt-4">
-                <h3>學習功能</h3>
+                <h3 class="text-center mb-4">學習功能</h3>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <div class="feature-card">
                             <h5>單字測試</h5>
-                            <button class="cyber-button" onclick="window.location.href='/study/test'">開始測試</button>
+                            <p class="text-muted">測試你的單字掌握程度</p>
+                            <button class="cyber-button" onclick="window.location.href='/study/test'">
+                                <i class="fas fa-tasks"></i> 開始測試
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="feature-card">
                             <h5>生詞本</h5>
-                            <button class="cyber-button" onclick="window.location.href='/study/list'">查看生詞本</button>
+                            <p class="text-muted">管理你的學習進度</p>
+                            <button class="cyber-button" onclick="window.location.href='/study/list'">
+                                <i class="fas fa-book"></i> 查看生詞本
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="feature-card">
                             <h5>學習統計</h5>
-                            <button class="cyber-button" onclick="window.location.href='/study/statistics'">查看統計</button>
+                            <p class="text-muted">查看你的學習數據</p>
+                            <button class="cyber-button" onclick="window.location.href='/study/statistics'">
+                                <i class="fas fa-chart-bar"></i> 查看統計
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -291,9 +456,13 @@
                     document.getElementById('userInfo').style.display = 'flex';
                     document.getElementById('authButtons').style.display = 'none';
                     document.getElementById('username').textContent = data.username;
+                    // 更新頁面標題
+                    document.getElementById('pageTitle').textContent = `${data.username}的英文學習詞典`;
                 } else {
                     document.getElementById('userInfo').style.display = 'none';
                     document.getElementById('authButtons').style.display = 'flex';
+                    // 重置頁面標題
+                    document.getElementById('pageTitle').textContent = '賽博朋克詞典';
                 }
             } catch (error) {
                 console.error('Error checking auth status:', error);
@@ -304,6 +473,8 @@
         async function logout() {
             try {
                 await fetch('/logout');
+                // 重置頁面標題
+                document.getElementById('pageTitle').textContent = '賽博朋克詞典';
                 window.location.reload();
             } catch (error) {
                 console.error('Error logging out:', error);
@@ -561,6 +732,45 @@
 
         // 頁面加載時檢查登入狀態
         checkAuthStatus();
+
+        // 頁面加載動畫
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加頁面過渡動畫
+            document.querySelectorAll('.page-transition').forEach(element => {
+                element.classList.add('active');
+            });
+
+            // 添加結果容器的顯示動畫
+            const resultContainer = document.getElementById('result');
+            if (resultContainer) {
+                resultContainer.classList.add('show');
+            }
+
+            // 為歷史記錄項目添加延遲動畫
+            document.querySelectorAll('.history-item').forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // 平滑滾動
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 表單提交動畫
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+        });
     </script>
 </body>
 </html> 
